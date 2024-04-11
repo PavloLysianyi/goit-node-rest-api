@@ -9,12 +9,22 @@ import {
 } from "../services/contactsServices.js";
 
 const getAllContacts = async (req, res) => {
+  const { _id: owner } = req.user;
+  const { page = 1, limit = 10, favorite } = req.query;
+  const filter = favorite ? { owner, favorite } : { owner };
+  const skip = (page - 1) * limit;
+
+  const result = await getContacts({ ...filter }, { skip, limit });
+
   const result = await getContacts();
   res.json(result);
 };
 
 const getOneContact = async (req, res) => {
   const { id } = req.params;
+  const { _id: owner } = req.user;
+
+  const result = await getContactById({ _id: id, owner });
   const result = await getContactById(id);
 
   if (!result) {
@@ -25,12 +35,17 @@ const getOneContact = async (req, res) => {
 };
 
 const createContact = async (req, res) => {
+  const { _id: owner } = req.user;
+  const result = await addContact({ ...req.body, owner });
+
   const result = await addContact(req.body);
   res.status(201).json(result);
 };
 
 const updateContact = async (req, res) => {
   const { id } = req.params;
+  const { _id: owner } = req.user;
+  const result = await updateContactById({ _id: id, owner }, req.body);
   const result = await updateContactById(id, req.body);
 
   if (!result) {
@@ -42,6 +57,9 @@ const updateContact = async (req, res) => {
 
 const updateFavorite = async (req, res) => {
   const { id } = req.params;
+  const { _id: owner } = req.user;
+
+  const result = await updateContactById({ _id: id, owner }, req.body);
   const result = await updateContactById(id, req.body);
 
   if (!result) {
@@ -53,6 +71,9 @@ const updateFavorite = async (req, res) => {
 
 const deleteContact = async (req, res) => {
   const { id } = req.params;
+  const { _id: owner } = req.user;
+
+  const result = await removeContact({ _id: id, owner });
   const result = await removeContact(id);
 
   if (!result) {

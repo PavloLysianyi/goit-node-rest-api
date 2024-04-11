@@ -20,6 +20,9 @@ contactsRouter.get(
   isValidId,
   contactsControllers.getOneContact
 );
+contactsRouter.get("/", contactsControllers.getAllContact);
+
+contactsRouter.get("/:id", isValidId, contactsControllers.getOneContact);
 
 contactsRouter.post(
   "/",
@@ -43,6 +46,8 @@ contactsRouter.patch(
   validateBody(updateFavoriteSchema),
   contactsControllers.updateFavorite
 );
+
+contactsRouter.delete("/:id", isValidId, contactsControllers.deleteContact);
 
 contactsRouter.delete(
   "/:id",

@@ -6,6 +6,8 @@ export const getContacts = async (filter = {}, query = {}) => {
     "name email phone favorite",
     query
   ).populate("owner", "email");
+export const getContacts = async () => {
+  const contacts = await Contact.find({});
   return contacts;
 };
 
